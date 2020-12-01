@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -8,44 +9,53 @@ namespace advent2020
   {
     static void Main(string[] args)
     {
-      RunA("testdata1.txt");
-      RunB("testdata1.txt");
-      RunA("data1.txt");
-      RunB("data1.txt");
+      Console.WriteLine("Test data:");
+      Run("testdata1.txt");
+      Console.WriteLine("Answer data:");
+      Run("data1.txt");
     }
 
-    static void RunA(string filepath) {
+    static void Run(string filepath)
+    {
       var lines = File.ReadAllLines(filepath);
-      int[] values = lines.Select(int.Parse).ToArray();
-      for (int i = 0; i < values.Length; i++)
-      {
-          for (int j = i; j < values.Length; j++)
-          {
-            if(values[i]+ values[j] == 2020)  {
-              Console.WriteLine(values[i] * values[j]);
-              return;
-            }
-          }
-      }      
+      var values = lines.Select(int.Parse).ToHashSet();
+      int resultA = RunA(values);
+      int resultB = RunB(values);
+      Console.WriteLine($"Result for A: {resultA}");
+      Console.WriteLine($"Result for B: {resultB}");
     }
-    static void RunB(string filepath) {
-      var lines = File.ReadAllLines(filepath);
-      int[] values = lines.Select(int.Parse).ToArray();
-      for (int i = 0; i < values.Length; i++)
+
+    private static int RunA(HashSet<int> values)
+    {
+      foreach (var value in values)
       {
-          for (int j = i; j < values.Length; j++)
-          {
-            for (int k = j; k < values.Length; k++)
-            {
-              if(values[i]+ values[j] + values[k] == 2020)  {
-              Console.WriteLine(values[i] * values[j] *values[k]);
-              return;
-            }
-                
-            }
-            
-          }
-      }      
+        int target = 2020 - value;
+        if (values.Contains(target))
+        {
+          return target * value;
+        }
+
+      }
+      return 0;
     }
-  }    
+    private static int RunB(HashSet<int> values)
+    {
+      int[] numbers = values.ToArray();
+      for (int i = 0; i < numbers.Length; i++)
+      {
+        for (int j = i + 1; j < numbers.Length; j++)
+        {
+          int target = 2020 - numbers[i] - numbers[j];
+          if (values.Contains(target))
+          {
+            return target * numbers[i] * numbers[j];
+          }
+        }
+      }
+
+      return 0;
+    }
+
+
+  }
 }
