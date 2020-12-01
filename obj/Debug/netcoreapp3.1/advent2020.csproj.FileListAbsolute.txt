@@ -1,0 +1,13 @@
+/workspaces/advent2020/bin/Debug/netcoreapp3.1/advent2020
+/workspaces/advent2020/bin/Debug/netcoreapp3.1/advent2020.deps.json
+/workspaces/advent2020/bin/Debug/netcoreapp3.1/advent2020.runtimeconfig.json
+/workspaces/advent2020/bin/Debug/netcoreapp3.1/advent2020.runtimeconfig.dev.json
+/workspaces/advent2020/bin/Debug/netcoreapp3.1/advent2020.dll
+/workspaces/advent2020/bin/Debug/netcoreapp3.1/advent2020.pdb
+/workspaces/advent2020/obj/Debug/netcoreapp3.1/advent2020.csprojAssemblyReference.cache
+/workspaces/advent2020/obj/Debug/netcoreapp3.1/advent2020.AssemblyInfoInputs.cache
+/workspaces/advent2020/obj/Debug/netcoreapp3.1/advent2020.AssemblyInfo.cs
+/workspaces/advent2020/obj/Debug/netcoreapp3.1/advent2020.csproj.CoreCompileInputs.cache
+/workspaces/advent2020/obj/Debug/netcoreapp3.1/advent2020.dll
+/workspaces/advent2020/obj/Debug/netcoreapp3.1/advent2020.pdb
+/workspaces/advent2020/obj/Debug/netcoreapp3.1/advent2020.genruntimeconfig.cache
