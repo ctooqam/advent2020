@@ -9,7 +9,7 @@ namespace advent2020
   {
     static void Main(string[] args)
     {
-      Day9.Run();
+      Day10.Run();
     }
   }
 }
