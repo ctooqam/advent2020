@@ -11,10 +11,45 @@ namespace advent2020
 
     public static void Run()
     {
+      // Console.WriteLine("Test data:");
+      // Run("data/testdata13.txt");
+      // Console.WriteLine("Answer data:");
+      // Run("data/data13.txt");
+
       Console.WriteLine("Test data:");
-      Run("data/testdata13.txt");
+      RunB("data/testdata13.txt");
+      Console.WriteLine("Test data b:");
+      RunB("data/testdata13b.txt");
       Console.WriteLine("Answer data:");
-      Run("data/data13.txt");
+      RunB("data/data13.txt");
+    }
+
+    static void RunB(string filepath)
+    {
+      var lines = File.ReadAllLines(filepath);
+      var splitted = lines[1].Split(',');
+      List<Tuple<int, int>> bustimes = new List<Tuple<int, int>>();
+      for (int i = 0; i < splitted.Length; i++)
+      {
+        if (splitted[i] != "x")
+        {
+          bustimes.Add(Tuple.Create(int.Parse(splitted[i]), i));
+        }
+      }
+
+      long stepsize = bustimes[0].Item1;
+      long candidate = 0;
+
+      for (int i = 1; i < bustimes.Count; i++)
+      {
+        while ((candidate + bustimes[i].Item2) % bustimes[i].Item1 != 0)
+        {
+          candidate += stepsize;
+        }
+        stepsize *= bustimes[i].Item1;
+      }
+      Console.WriteLine(candidate);
+
     }
     static void Run(string filepath)
     {
