@@ -78,46 +78,6 @@ namespace advent2020
 
      
     }
-
-
-    // static List<List<int>> Dfs(List<int[]> tickets, List<(string token, Ranges first, Ranges second)> rules, int pos, int[] path)
-    // {
-    //   var allValidCombinations = new List<List<int>>();
-    //   for (int i = 0; i < rules.Count; i++)
-    //   {
-
-    //     if (path.Contains(i))
-    //     {
-    //       continue;
-    //     }
-    //     var (_, first, second) = rules[i];
-    //     if (tickets.All(t => first.Within(t[pos]) || second.Within(t[pos])))
-    //     {
-    //       if (pos == rules.Count - 1)
-    //       {
-    //         //Found
-    //         foreach (var p in path)
-    //         {
-    //           Console.Write($"{p}");
-    //         }
-    //         Console.Write(i);
-    //       }
-    //       else
-    //       {
-    //         var newSet = visistedRules.ToHashSet();
-    //         newSet.Add(i);
-    //         var validCombinations = Dfs(tickets, rules, pos + 1, newSet);
-    //         foreach (var comb in validCombinations)
-    //         {
-    //           var a = comb.ToList();
-    //           a.Insert(0, i);
-    //           allValidCombinations.Add(a);
-    //         }
-    //       }
-    //     }
-    //   }
-    //   return allValidCombinations;
-    // }
     static bool Valid(List<int[]> tickets, List<(string token, Ranges first, Ranges second)> rules, int pos, int[] path, Dictionary<string, bool> visited)
     {
       int[] candidates = Enumerable.Range(0, rules.Count).Where(x => !path.Contains(x)).ToArray();
