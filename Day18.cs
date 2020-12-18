@@ -55,6 +55,23 @@ namespace advent2020
         long num = Calculate(substring);
         return Calculate(line.Replace("(" + substring + ")", num.ToString()));
       }
+      else if (line.Contains('+'))
+      {
+        var tokens = line.Split(" ");
+        if (tokens.Length == 3)
+        {
+          return long.Parse(tokens[0]) + long.Parse(tokens[2]);
+        }
+        int first = Array.IndexOf(tokens, "+");
+
+
+        string substring = tokens[first - 1] + " " + tokens[first] + " " + tokens[first + 1];
+        long num = Calculate(substring);
+        int prev = first - 1;
+        int next = first + 2;
+        var newline = string.Join(" ", tokens[..prev].Concat(new string[] { num.ToString() }).Concat(tokens[next..]));
+        return Calculate(newline);
+      }
       else
       {
         var tokens = line.Split(" ");
@@ -62,14 +79,7 @@ namespace advent2020
         long num = long.Parse(tokens[0]);
         for (int i = 1; i < tokens.Length; i += 2)
         {
-          if (tokens[i] == "*")
-          {
-            num *= long.Parse(tokens[i + 1]);
-          }
-          else
-          {
-            num += long.Parse(tokens[i + 1]);
-          }
+          num *= long.Parse(tokens[i + 1]);
         }
         return num;
       }
