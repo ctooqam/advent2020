@@ -13,104 +13,15 @@ namespace advent2020
     {
       Console.WriteLine("Test data:");
       Run("data/testdata19.txt");
+      Visited.Clear();
+      VisitedList.Clear();
+
       Console.WriteLine("Answer data:");
       Run("data/data19.txt");
-      // Console.WriteLine("Answer data B:");
-      // RunContains("data/data19b.txt");
-    }
-
-    private static void RunContains(string filePath)
-    {
-      var lines = File.ReadAllLines(filePath);
-      var rules = new Dictionary<int, string>();
-      var messages = new List<string>();
-      bool parse_rules = true;
-      foreach (var line in lines)
-      {
-        if (string.IsNullOrWhiteSpace(line))
-        {
-          parse_rules = false;
-          continue;
-        }
-        if (parse_rules)
-        {
-          var tokens = line.Split(":");
-          var key = int.Parse(tokens[0]);
-          string value = tokens[1].Trim();
-          rules[key] = value;
-        }
-        else
-        {
-          messages.Add(line);
-        }
-      }
-      foreach (var rule in rules)
-      {
-        bool is_static = IsStatic(rule.Key, rules);
-        if (is_static)
-        {
-          Console.WriteLine($"key= {rule.Key} and line =  {rule.Value}");
-        }
-      }
-
-      string derived = Derived(42, rules);
-      Console.WriteLine(derived);
-
-    }
-
-    private static string Derived(int key, Dictionary<int, string> rules)
-    {
-      if (rules[key].Contains("|"))
-      {
-        var splitted = rules[key].Split("|");
-        var r1 = splitted[0].Trim().Split(" ").Select(int.Parse).ToArray();
-        var r2 = splitted[1].Trim().Split(" ").Select(int.Parse).ToArray();
-        return DeriveSub(rules, r1) + " | " + DeriveSub(rules, r2);
-      }
-      else if (rules[key].Contains('"'))
-      {
-        return rules[key];
-      }
-      else
-      {
-        var rulesKeys = rules[key].Split(" ").Select(int.Parse).ToArray();
-        return DeriveSub(rules, rulesKeys);
-      }
-
-    }
-
-    private static string DeriveSub(Dictionary<int, string> rules, int[] rulesKeys)
-    {
-      StringBuilder sb = new();
-      foreach (var r in rulesKeys)
-      {
-        sb.Append(Derived(r, rules));
-      }
-      return sb.ToString();
-    }
-
-    private static bool IsStatic(int key, Dictionary<int, string> rules)
-    {
-      if (rules[key].Contains("|"))
-      {
-        return false;
-      }
-      else if (rules[key].Contains('"'))
-      {
-        return true;
-      }
-      else
-      {
-        var rulesKeys = rules[key].Split(" ").Select(int.Parse).ToArray();
-        foreach (var r in rulesKeys)
-        {
-          if (!IsStatic(r, rules))
-          {
-            return false;
-          }
-        }
-        return true;
-      }
+      Visited.Clear();
+      VisitedList.Clear();
+      Console.WriteLine("Answer data B:");
+      Run("data/data19b.txt");
     }
 
     // 0: 4 1 5
@@ -150,27 +61,29 @@ namespace advent2020
           messages.Add(line);
         }
       }
-      var depths = new Dictionary<int, int>();
-      Depth(0, depths, rules);
       int count = 0;
       foreach (var msg in messages)
       {
-        if (Valid(msg, depths, rules, 0))
+        if (Valid(msg, rules, 0))
         {
           count++;
         }
       }
+      // Console.WriteLine(Valid(messages[0], rules, 0));
       Console.WriteLine(count);
-      Console.WriteLine(depths[0]);
 
     }
 
-    private static bool Valid(string msg, Dictionary<int, int> depths, Dictionary<int, string> rules, int ruleKey)
+    private static Dictionary<string, bool> Visited = new();
+    private static Dictionary<string, bool> VisitedList = new();
+
+    private static bool Valid(string msg, Dictionary<int, string> rules, int ruleKey)
     {
-      if (string.IsNullOrEmpty(msg)) { return false; }
-      if (msg.Length < depths[ruleKey])
+      if (string.IsNullOrWhiteSpace(msg)) { return false; }
+      string key = msg + ruleKey;
+      if (Visited.ContainsKey(key))
       {
-        return false;
+        return Visited[key];
       }
       if (rules[ruleKey].Contains("|"))
       {
@@ -178,12 +91,14 @@ namespace advent2020
         foreach (var r in splitted)
         {
           var rulesKeys = r.Trim().Split(" ").Select(int.Parse).ToArray();
-          bool valid = ValidRules(msg, rulesKeys, rules, depths);
+          bool valid = ValidRules(msg, rulesKeys, rules);
           if (valid)
           {
+            Visited[key] = true;
             return true;
           }
         }
+        Visited[key] = false;
         return false;
       }
       else if (rules[ruleKey].Contains('"'))
@@ -193,73 +108,46 @@ namespace advent2020
       else
       {
         var rulesKeys = rules[ruleKey].Split(" ").Select(int.Parse).ToArray();
-        bool valid = ValidRules(msg, rulesKeys, rules, depths);
+        bool valid = ValidRules(msg, rulesKeys, rules);
+        Visited[key] = valid;
         return valid;
 
-
       }
     }
 
-    private static bool ValidRules(string msg, int[] ruleKeys, Dictionary<int, string> rules, Dictionary<int, int> depths)
+    private static bool ValidRules(string msg, int[] ruleKeys, Dictionary<int, string> rules)
     {
-      int idx = 0;
-      foreach (var r in ruleKeys)
+      if (string.IsNullOrWhiteSpace(msg) && ruleKeys.Length == 0)
       {
-        int depth = depths[r];
-        var substring = msg[idx..(idx + depth)];
-        idx += depth;
-        if (!Valid(substring, depths, rules, r))
+        return true;
+      }
+      if (ruleKeys.Length == 0)
+      {
+        return false;
+      }
+      if (string.IsNullOrWhiteSpace(msg))
+      {
+        return false;
+      }
+      if (ruleKeys.Length == 1)
+      {
+        return Valid(msg, rules, ruleKeys[0]);
+      }
+      string key = msg + ruleKeys.Aggregate("", (prev, rule) => prev + "," + rule);
+      if (VisitedList.ContainsKey(key))
+      {
+        return VisitedList[key];
+      }
+      for (int i = 1; i < msg.Length; i++)
+      {
+        if (Valid(msg[..i], rules, ruleKeys[0]) && ValidRules(msg[i..], ruleKeys[1..], rules))
         {
-          return false;
+          VisitedList[key] = true;
+          return true;
         }
       }
-      return true;
-    }
-
-    private static int Depth(int ruleKey, Dictionary<int, int> depths, Dictionary<int, string> rules)
-    {
-      if (depths.ContainsKey(ruleKey))
-      {
-        return depths[ruleKey];
-      }
-      if (rules[ruleKey].Contains("|"))
-      {
-        var rule = rules[ruleKey];
-        var allRuleKeys = rule.Split("|");
-        int[] sums = new int[allRuleKeys.Length];
-        for (int i = 0; i < allRuleKeys.Length; i++)
-        {
-          var allKeys = allRuleKeys[i].Trim().Split(" ");
-          sums[i] = 0;
-          foreach (var a in allKeys)
-          {
-            sums[i] += Depth(int.Parse(a), depths, rules);
-          }
-        }
-        if (sums.Distinct().Count() != 1)
-        {
-          throw new Exception();
-        }
-        depths.Add(ruleKey, sums[0]);
-        return sums[0];
-      }
-      else if (rules[ruleKey].Contains('"'))
-      {
-        depths.Add(ruleKey, 1);
-        return 1;
-      }
-      else
-      {
-        var rule = rules[ruleKey];
-        var allRuleKeys = rule.Split(" ");
-        int sum = 0;
-        foreach (var a in allRuleKeys)
-        {
-          sum += Depth(int.Parse(a), depths, rules);
-        }
-        depths.Add(ruleKey, sum);
-        return sum;
-      }
+      VisitedList[key] = false;
+      return false;
     }
   }
 }
