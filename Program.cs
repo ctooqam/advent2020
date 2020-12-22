@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-namespace advent2020
+﻿namespace advent2020
 {
   class Program
   {
     static void Main(string[] args)
     {
-      Day19.Run();
+      Day22.Run();
     }
   }
 }
